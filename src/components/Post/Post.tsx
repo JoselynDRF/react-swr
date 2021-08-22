@@ -1,5 +1,6 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { useParams } from "react-router-dom";
+import { useFetch } from "../../hooks/useFetch";
 
 interface PostProps {
   id: number;
@@ -8,21 +9,15 @@ interface PostProps {
 
 const Post: FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [data, setData] = useState<PostProps>();
+  const { data } = useFetch<PostProps>(`posts/${id}`);
 
-  useEffect(() => {
-    fetch(`http://localhost:8080/posts/${id}`).then((response) => {
-      response.json().then((post) => {
-        setData(post);
-      });
-    });
-  }, [id]);
-
-  return (
+  return data ? (
     <ul>
       <li>ID: {data?.id}</li>
       <li>Title: {data?.title}</li>
     </ul>
+  ) : (
+    <p>Loading...</p>
   );
 };
 
